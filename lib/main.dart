@@ -7,8 +7,6 @@ import 'package:shopping_app/provider/products.dart';
 import 'package:shopping_app/screens/auth/login.dart';
 import 'package:shopping_app/screens/auth/sign_up.dart';
 import 'package:shopping_app/screens/bottom_bar.dart';
-import 'package:shopping_app/screens/landing_page.dart';
-import 'package:shopping_app/screens/main_screen.dart';
 import 'package:shopping_app/screens/user_state.dart';
 import 'package:shopping_app/screens/wishlist.dart';
 import 'package:flutter/material.dart';
@@ -34,6 +32,7 @@ class _MyAppState extends State<MyApp> {
   DarkThemeProvider themeChangeProvider = DarkThemeProvider();
 
   void getCurrentAppTheme() async {
+    print('called ,mmmmm');
     themeChangeProvider.darkTheme =
         await themeChangeProvider.darkThemePreferences.getTheme();
   }
@@ -82,31 +81,27 @@ class _MyAppState extends State<MyApp> {
                   create: (_) => FavsProvider(),
                 ),
               ],
-              child: Consumer<DarkThemeProvider>(
-                  builder: (context, themeData, child) {
-                return MaterialApp(
-                  title: 'Flutter Demo',
-                  theme:
-                      Styles.themeData(themeChangeProvider.darkTheme, context),
-                  home: UserState(),
-                  //initialRoute: '/',
-                  routes: {
-                    //   '/': (ctx) => LandingPage(),
-                    BrandNavigationRailScreen.routeName: (ctx) =>
-                        BrandNavigationRailScreen(),
-                    CartScreen.routeName: (ctx) => CartScreen(),
-                    Feeds.routeName: (ctx) => Feeds(),
-                    WishlistScreen.routeName: (ctx) => WishlistScreen(),
-                    ProductDetails.routeName: (ctx) => ProductDetails(),
-                    CategoriesFeedsScreen.routeName: (ctx) =>
-                        CategoriesFeedsScreen(),
-                    LoginScreen.routeName: (ctx) => LoginScreen(),
-                    SignUpScreen.routeName: (ctx) => SignUpScreen(),
-                    BottomBarScreen.routeName: (ctx) => BottomBarScreen(),
-                    UploadProductForm.routeName: (ctx) => UploadProductForm(),
-                  },
-                );
-              }));
+              child: MaterialApp(
+                title: 'Flutter Demo',
+                theme: Styles.themeData(themeChangeProvider.darkTheme, context),
+                home: UserState(),
+                //initialRoute: '/',
+                routes: {
+                  //   '/': (ctx) => LandingPage(),
+                  BrandNavigationRailScreen.routeName: (ctx) =>
+                      BrandNavigationRailScreen(),
+                  CartScreen.routeName: (ctx) => CartScreen(),
+                  Feeds.routeName: (ctx) => Feeds(),
+                  WishlistScreen.routeName: (ctx) => WishlistScreen(),
+                  ProductDetails.routeName: (ctx) => ProductDetails(),
+                  CategoriesFeedsScreen.routeName: (ctx) =>
+                      CategoriesFeedsScreen(),
+                  LoginScreen.routeName: (ctx) => LoginScreen(),
+                  SignUpScreen.routeName: (ctx) => SignUpScreen(),
+                  BottomBarScreen.routeName: (ctx) => BottomBarScreen(),
+                  UploadProductForm.routeName: (ctx) => UploadProductForm(),
+                },
+              ));
         });
   }
 }

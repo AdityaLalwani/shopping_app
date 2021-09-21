@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shopping_app/consts/colors.dart';
 import 'package:shopping_app/consts/my_icons.dart';
@@ -19,6 +20,12 @@ class _UserInfoState extends State<UserInfo> {
   ScrollController _scrollController;
   var top = 0.0;
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  String _uid;
+  String _name;
+  String _email;
+  String _joinedAt;
+  String _userImageUrl;
+  int _phoneNumber;
   @override
   void initState() {
     super.initState();
@@ -26,6 +33,30 @@ class _UserInfoState extends State<UserInfo> {
     _scrollController.addListener(() {
       setState(() {});
     });
+    getData();
+  }
+
+  void getData() async {
+    User user = _auth.currentUser;
+    _uid = user.uid;
+
+    print('user.displayName ${user.displayName}');
+    print('user.photoURL ${user.photoURL}');
+    final DocumentSnapshot userDoc = user.isAnonymous
+        ? null
+        : await FirebaseFirestore.instance.collection('users').doc(_uid).get();
+    if (userDoc == null) {
+      return;
+    } else {
+      setState(() {
+        _name = userDoc.get('name');
+        _email = user.email;
+        _joinedAt = userDoc.get('joinedAt');
+        _phoneNumber = userDoc.get('phoneNumber');
+        _userImageUrl = userDoc.get('imageUrl');
+      });
+    }
+    // print("name $_name");
   }
 
   @override
@@ -85,8 +116,8 @@ class _UserInfoState extends State<UserInfo> {
                                     shape: BoxShape.circle,
                                     image: DecorationImage(
                                       fit: BoxFit.fill,
-                                      image: NetworkImage(
-                                          'https://cdn1.vectorstock.com/i/thumb-large/62/60/default-avatar-photo-placeholder-profile-image-vector-21666260.jpg'),
+                                      image: NetworkImage(_userImageUrl ??
+                                          'https://t3.ftcdn.net/jpg/01/83/55/76/240_F_183557656_DRcvOesmfDl5BIyhPKrcWANFKy2964i9.jpg'),
                                     ),
                                   ),
                                 ),
@@ -95,7 +126,7 @@ class _UserInfoState extends State<UserInfo> {
                                 ),
                                 Text(
                                   // 'top.toString()',
-                                  'Guest',
+                                  _name == null ? 'Guest' : _name,
                                   style: TextStyle(
                                       fontSize: 20.0, color: Colors.white),
                                 ),
@@ -105,8 +136,8 @@ class _UserInfoState extends State<UserInfo> {
                         ],
                       ),
                       background: Image(
-                        image: NetworkImage(
-                            'https://cdn1.vectorstock.com/i/thumb-large/62/60/default-avatar-photo-placeholder-profile-image-vector-21666260.jpg'),
+                        image: NetworkImage(_userImageUrl ??
+                            'https://t3.ftcdn.net/jpg/01/83/55/76/240_F_183557656_DRcvOesmfDl5BIyhPKrcWANFKy2964i9.jpg'),
                         fit: BoxFit.fill,
                       ),
                     ),
@@ -160,10 +191,11 @@ class _UserInfoState extends State<UserInfo> {
                       thickness: 1,
                       color: Colors.grey,
                     ),
-                    userListTile('Email', 'Email sub', 0, context),
-                    userListTile('Phone number', '4555', 1, context),
+                    userListTile('Email', _email ?? '', 0, context),
+                    userListTile('Phone number', _phoneNumber.toString() ?? '',
+                        1, context),
                     userListTile('Shipping address', '', 2, context),
-                    userListTile('joined date', 'date', 3, context),
+                    userListTile('joined date', _joinedAt ?? '', 3, context),
                     Padding(
                       padding: const EdgeInsets.only(left: 8.0),
                       child: userTitle('User settings'),

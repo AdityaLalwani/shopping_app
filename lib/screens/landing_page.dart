@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -26,6 +27,7 @@ class _LandingPageState extends State<LandingPage>
   ];
   final FirebaseAuth _auth = FirebaseAuth.instance;
   GlobalMethods _globalMethods = GlobalMethods();
+  bool _isLoading = false;
   @override
   void initState() {
     super.initState();
@@ -59,14 +61,47 @@ class _LandingPageState extends State<LandingPage>
       final googleAuth = await googleAccount.authentication;
       if (googleAuth.accessToken != null && googleAuth.idToken != null) {
         try {
+          var date = DateTime.now().toString();
+          var dateparse = DateTime.parse(date);
+          var formattedDate =
+              "${dateparse.day}-${dateparse.month}-${dateparse.year}";
           final authResult = await _auth.signInWithCredential(
               GoogleAuthProvider.credential(
                   idToken: googleAuth.idToken,
                   accessToken: googleAuth.accessToken));
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(authResult.user.uid)
+              .set({
+            'id': authResult.user.uid,
+            'name': authResult.user.displayName,
+            'email': authResult.user.email,
+            'phoneNumber': authResult.user.phoneNumber,
+            'imageUrl': authResult.user.photoURL,
+            'joinedAt': formattedDate,
+            'createdAt': Timestamp.now(),
+          });
         } catch (error) {
           _globalMethods.authErrorHandle(error.message, context);
         }
       }
+    }
+  }
+
+  void _loginAnonymosly() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      await _auth.signInAnonymously();
+    } catch (error) {
+      _globalMethods.authErrorHandle(error.message, context);
+      print('error occured ${error.message}');
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
@@ -233,15 +268,19 @@ class _LandingPageState extends State<LandingPage>
                 borderSide: BorderSide(width: 2, color: Colors.red),
                 child: Text('Google +'),
               ),
-              OutlineButton(
-                onPressed: () {
-                  Navigator.pushNamed(context, BottomBarScreen.routeName);
-                },
-                shape: StadiumBorder(),
-                highlightedBorderColor: Colors.deepPurple.shade200,
-                borderSide: BorderSide(width: 2, color: Colors.deepPurple),
-                child: Text('Sign in as a guest'),
-              ),
+              _isLoading
+                  ? CircularProgressIndicator()
+                  : OutlineButton(
+                      onPressed: () {
+                        _loginAnonymosly();
+                        // Navigator.pushNamed(context, BottomBarScreen.routeName);
+                      },
+                      shape: StadiumBorder(),
+                      highlightedBorderColor: Colors.deepPurple.shade200,
+                      borderSide:
+                          BorderSide(width: 2, color: Colors.deepPurple),
+                      child: Text('Sign in as a guest'),
+                    ),
             ],
           ),
           SizedBox(
