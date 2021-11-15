@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:shopping_app/inner_screens/upload_product_form.dart';
+import 'package:shopping_app/screens/upload_product_form.dart';
 
 import 'bottom_bar.dart';
 

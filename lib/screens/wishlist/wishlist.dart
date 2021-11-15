@@ -2,8 +2,8 @@ import 'package:shopping_app/consts/my_icons.dart';
 import 'package:shopping_app/provider/favs_provider.dart';
 import 'package:shopping_app/services/global_method.dart';
 
-import 'package:shopping_app/widget/wishlist_empty.dart';
-import 'package:shopping_app/widget/wishlist_full.dart';
+import 'package:shopping_app/screens/wishlist/wishlist_empty.dart';
+import 'package:shopping_app/screens/wishlist/wishlist_full.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

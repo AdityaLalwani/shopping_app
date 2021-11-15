@@ -6,8 +6,9 @@ import 'package:shopping_app/provider/cart_provider.dart';
 import 'package:shopping_app/provider/dark_theme_provider.dart';
 import 'package:shopping_app/provider/favs_provider.dart';
 import 'package:shopping_app/provider/products.dart';
-import 'package:shopping_app/screens/cart.dart';
-import 'package:shopping_app/screens/wishlist.dart';
+import 'package:shopping_app/screens/bottom_bar.dart';
+import 'package:shopping_app/screens/cart/cart.dart';
+import 'package:shopping_app/screens/wishlist/wishlist.dart';
 import 'package:shopping_app/widget/feeds_products.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -117,7 +118,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                               height: 8,
                             ),
                             Text(
-                              'US \$ ${prodAttr.price}',
+                              'INR \₹ ${prodAttr.price}',
                               style: TextStyle(
                                   color: themeState.darkTheme
                                       ? Theme.of(context).disabledColor
@@ -237,7 +238,8 @@ class _ProductDetailsState extends State<ProductDetails> {
                   width: double.infinity,
                   height: 340,
                   child: ListView.builder(
-                    itemCount: 7,
+                    itemCount:
+                        productsList.length < 7 ? productsList.length : 7,
                     scrollDirection: Axis.horizontal,
                     itemBuilder: (BuildContext ctx, int index) {
                       return ChangeNotifierProvider.value(
@@ -320,7 +322,11 @@ class _ProductDetailsState extends State<ProductDetails> {
                       color: Colors.redAccent.shade400,
                       onPressed:
                           cartProvider.getCartItems.containsKey(productId)
-                              ? () {}
+                              ? () {
+                                  BottomBarScreen.selectPage(3);
+                                  Navigator.of(context)
+                                      .pushNamed(BottomBarScreen.routeName);
+                                }
                               : () {
                                   cartProvider.addProductToCart(
                                       productId,
@@ -345,7 +351,13 @@ class _ProductDetailsState extends State<ProductDetails> {
                       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       shape: RoundedRectangleBorder(side: BorderSide.none),
                       color: Theme.of(context).backgroundColor,
-                      onPressed: () {},
+                      onPressed: () {
+                        BottomBarScreen.selectPage(3);
+                        cartProvider.addProductToCart(productId, prodAttr.price,
+                            prodAttr.title, prodAttr.imageUrl);
+                        Navigator.of(context)
+                            .pushNamed(BottomBarScreen.routeName);
+                      },
                       child: Row(
                         children: [
                           Text(

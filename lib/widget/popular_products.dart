@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:provider/provider.dart';
 import 'package:shopping_app/provider/favs_provider.dart';
+import 'package:shopping_app/screens/bottom_bar.dart';
 
 class PopularProducts extends StatelessWidget {
   // final String imageUrl;
@@ -19,7 +20,7 @@ class PopularProducts extends StatelessWidget {
   Widget build(BuildContext context) {
     final productsAttributes = Provider.of<Product>(context);
     final cartProvider = Provider.of<CartProvider>(context);
-    final favProvider = Provider.of<FavsProvider>(context);
+    final favsProvider = Provider.of<FavsProvider>(context);
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Container(
@@ -60,7 +61,7 @@ class PopularProducts extends StatelessWidget {
                       top: 8,
                       child: Icon(
                         Entypo.star,
-                        color: favProvider.getFavsItems
+                        color: favsProvider.getFavsItems
                                 .containsKey(productsAttributes.id)
                             ? Colors.red
                             : Colors.grey.shade800,
@@ -81,7 +82,7 @@ class PopularProducts extends StatelessWidget {
                         padding: EdgeInsets.all(10.0),
                         color: Theme.of(context).backgroundColor,
                         child: Text(
-                          '\$ ${productsAttributes.price}',
+                          '\₹ ${productsAttributes.price}',
                           style: TextStyle(
                             color: Theme.of(context).textSelectionColor,
                           ),
@@ -126,7 +127,11 @@ class PopularProducts extends StatelessWidget {
                                 onTap: cartProvider.getCartItems.containsKey(
                                   productsAttributes.id,
                                 )
-                                    ? () {}
+                                    ? () {
+                                        BottomBarScreen.selectPage(3);
+                                        Navigator.of(context).pushNamed(
+                                            BottomBarScreen.routeName);
+                                      }
                                     : () {
                                         cartProvider.addProductToCart(
                                             productsAttributes.id,

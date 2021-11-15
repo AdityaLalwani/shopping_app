@@ -3,19 +3,25 @@ import 'package:shopping_app/screens/search.dart';
 import 'package:shopping_app/screens/user_info.dart';
 import 'package:flutter/material.dart';
 
-import 'cart.dart';
+import 'cart/cart.dart';
 import 'feeds.dart';
 import 'home.dart';
+
+int _selectedPageIndex = 0;
 
 class BottomBarScreen extends StatefulWidget {
   static const routeName = '/BottomBarScreen';
   @override
   _BottomBarScreenState createState() => _BottomBarScreenState();
+
+  static void selectPage(int i) {
+    _selectedPageIndex = i;
+  }
 }
 
 class _BottomBarScreenState extends State<BottomBarScreen> {
   // List<Map<String, Object>> _pages;
-  int _selectedPageIndex = 0;
+  // int _selectedPageIndex = 0;
   List<Object> pages;
   @override
   void initState() {

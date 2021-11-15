@@ -1,5 +1,6 @@
 import 'package:shopping_app/provider/products.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_icons/flutter_icons.dart';
 import 'package:provider/provider.dart';
 
 import 'brands_rail_widget.dart';
@@ -212,7 +213,7 @@ class ContentSpace extends StatelessWidget {
         productsBrand.add(productsData.products[i]);
       }
     }
-    print('productsBrand ${productsBrand[0].imageUrl}');
+    // print('productsBrand ${productsBrand[0].imageUrl}');
     print('brand $brand');
     return Expanded(
       child: Padding(
@@ -220,12 +221,33 @@ class ContentSpace extends StatelessWidget {
         child: MediaQuery.removePadding(
           removeTop: true,
           context: context,
-          child: ListView.builder(
-            itemCount: productsBrand.length,
-            itemBuilder: (BuildContext context, int index) =>
-                ChangeNotifierProvider.value(
-                    value: productsBrand[index], child: BrandsNavigationRail()),
-          ),
+          child: productsBrand.isEmpty
+              ? Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Feather.database,
+                      size: 80,
+                    ),
+                    SizedBox(
+                      height: 40,
+                    ),
+                    Text(
+                      'No products related to this brand',
+                      textAlign: TextAlign.center,
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
+                    ),
+                  ],
+                )
+              : ListView.builder(
+                  itemCount: productsBrand.length,
+                  itemBuilder: (BuildContext context, int index) =>
+                      ChangeNotifierProvider.value(
+                          value: productsBrand[index],
+                          child: BrandsNavigationRail()),
+                ),
         ),
       ),
     );

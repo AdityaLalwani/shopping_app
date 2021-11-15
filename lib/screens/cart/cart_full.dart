@@ -43,7 +43,7 @@ class _CartFullState extends State<CartFull> {
       onTap: () => Navigator.pushNamed(context, ProductDetails.routeName,
           arguments: widget.productId),
       child: Container(
-        height: 135,
+        height: 138,
         margin: const EdgeInsets.all(10),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.only(
@@ -114,7 +114,7 @@ class _CartFullState extends State<CartFull> {
                           width: 5,
                         ),
                         Text(
-                          '${cartAttr.price}\$',
+                          '${cartAttr.price}\₹',
                           style: TextStyle(
                               fontSize: 16, fontWeight: FontWeight.w600),
                         ),
@@ -128,7 +128,7 @@ class _CartFullState extends State<CartFull> {
                         ),
                         FittedBox(
                           child: Text(
-                            '${subTotal.toStringAsFixed(2)} \$',
+                            '${subTotal.toStringAsFixed(2)} \₹',
                             style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w600,

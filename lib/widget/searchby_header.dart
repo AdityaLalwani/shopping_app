@@ -1,9 +1,9 @@
 import 'package:shopping_app/consts/colors.dart';
 import 'package:shopping_app/provider/cart_provider.dart';
 import 'package:shopping_app/provider/favs_provider.dart';
-import 'package:shopping_app/screens/cart.dart';
+import 'package:shopping_app/screens/cart/cart.dart';
 import 'package:shopping_app/screens/user_info.dart';
-import 'package:shopping_app/screens/wishlist.dart';
+import 'package:shopping_app/screens/wishlist/wishlist.dart';
 import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

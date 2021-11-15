@@ -24,7 +24,7 @@ class _FeedProductsState extends State<FeedProducts> {
             arguments: productsAttributes.id),
         child: Container(
           width: 250,
-          height: 290,
+          height: 209,
           decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(6),
               color: Theme.of(context).backgroundColor),
@@ -38,10 +38,7 @@ class _FeedProductsState extends State<FeedProducts> {
                         borderRadius: BorderRadius.circular(2),
                         child: Container(
                           width: double.infinity,
-                          constraints: BoxConstraints(
-                              minHeight: 100,
-                              maxHeight:
-                                  MediaQuery.of(context).size.height * 0.3),
+                          height: MediaQuery.of(context).size.height * 0.295,
                           child: Image.network(
                             productsAttributes.imageUrl,
                             //   fit: BoxFit.fitWidth,
@@ -88,7 +85,7 @@ class _FeedProductsState extends State<FeedProducts> {
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 8.0),
                       child: Text(
-                        '\$ ${productsAttributes.price}',
+                        '\₹ ${productsAttributes.price}',
                         overflow: TextOverflow.ellipsis,
                         maxLines: 2,
                         style: TextStyle(

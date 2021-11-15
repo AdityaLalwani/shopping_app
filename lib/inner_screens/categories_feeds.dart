@@ -1,3 +1,4 @@
+import 'package:flutter_icons/flutter_icons.dart';
 import 'package:shopping_app/provider/products.dart';
 import 'package:shopping_app/widget/feeds_products.dart';
 import 'package:flutter/material.dart';
@@ -12,18 +13,40 @@ class CategoriesFeedsScreen extends StatelessWidget {
     print(categoryName);
     final productsList = productsProvider.findByCategory(categoryName);
     return Scaffold(
-      body: GridView.count(
-        crossAxisCount: 2,
-        childAspectRatio: 240 / 420,
-        crossAxisSpacing: 8,
-        mainAxisSpacing: 8,
-        children: List.generate(productsList.length, (index) {
-          return ChangeNotifierProvider.value(
-            value: productsList[index],
-            child: FeedProducts(),
-          );
-        }),
-      ),
+      body: productsList.isEmpty
+          ? Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Icon(
+                    Feather.database,
+                    size: 80,
+                  ),
+                  SizedBox(
+                    height: 40,
+                  ),
+                  Text(
+                    'No products related to this category',
+                    // textAlign: TextAlign.center,
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
+                  ),
+                ],
+              ),
+            )
+          : GridView.count(
+              crossAxisCount: 2,
+              childAspectRatio: 240 / 420,
+              crossAxisSpacing: 8,
+              mainAxisSpacing: 8,
+              children: List.generate(productsList.length, (index) {
+                return ChangeNotifierProvider.value(
+                  value: productsList[index],
+                  child: FeedProducts(),
+                );
+              }),
+            ),
 //         StaggeredGridView.countBuilder(
 //           padding: ,
 //   crossAxisCount: 6,

@@ -8,6 +8,7 @@ import 'package:shopping_app/provider/products.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:provider/provider.dart';
+import 'package:shopping_app/screens/bottom_bar.dart';
 
 class FeedDialog extends StatelessWidget {
   final String productId;
@@ -80,7 +81,11 @@ class FeedDialog extends StatelessWidget {
                       context,
                       2,
                       cartProvider.getCartItems.containsKey(productId)
-                          ? () {}
+                          ? () {
+                              BottomBarScreen.selectPage(3);
+                              Navigator.of(context)
+                                  .pushNamed(BottomBarScreen.routeName);
+                            }
                           : () {
                               cartProvider.addProductToCart(
                                   productId,

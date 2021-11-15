@@ -1,18 +1,54 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:progress_dialog/progress_dialog.dart';
 import 'package:shopping_app/consts/colors.dart';
 import 'package:shopping_app/consts/my_icons.dart';
 import 'package:shopping_app/models/cart_attr.dart';
 import 'package:shopping_app/provider/cart_provider.dart';
 import 'package:shopping_app/services/global_method.dart';
-import 'package:shopping_app/widget/cart_empty.dart';
-import 'package:shopping_app/widget/cart_full.dart';
+import 'package:shopping_app/services/payment.dart';
+import 'package:shopping_app/screens/cart/cart_empty.dart';
+import 'package:shopping_app/screens/cart/cart_full.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shopping_app/widget/custom_dialog_box.dart';
+import 'package:uuid/uuid.dart';
 
-class CartScreen extends StatelessWidget {
+class CartScreen extends StatefulWidget {
+  //To be known 1) the amount must be an integer 2) the amount must not be double 3) the minimum amount should be less than 0.5 $
   static const routeName = '/CartScreen';
+
+  @override
+  _CartScreenState createState() => _CartScreenState();
+}
+
+class _CartScreenState extends State<CartScreen> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    StripeService.init();
+  }
+
+  var response;
+  Future<void> payWithCard({int amount}) async {
+    ProgressDialog dialog = ProgressDialog(context);
+    dialog.style(message: 'Please wait...');
+    print('please wait...');
+    await dialog.show();
+    response = await StripeService.payWithNewCard(
+        currency: 'INR', amount: amount.toString());
+    await dialog.hide();
+    print('response : ${response.success}');
+    Scaffold.of(context).showSnackBar(SnackBar(
+      content: Text(response.message),
+      duration: Duration(milliseconds: response.success == true ? 1200 : 3000),
+    ));
+  }
+
+  GlobalMethods globalMethods = GlobalMethods();
   @override
   Widget build(BuildContext context) {
-    GlobalMethods globalMethods = GlobalMethods();
     final cartProvider = Provider.of<CartProvider>(context);
 
     return cartProvider.getCartItems.isEmpty
@@ -60,6 +96,9 @@ class CartScreen extends StatelessWidget {
   }
 
   Widget checkoutSection(BuildContext ctx, double subtotal) {
+    final cartProvider = Provider.of<CartProvider>(context);
+    var uuid = Uuid();
+    final FirebaseAuth _auth = FirebaseAuth.instance;
     return Container(
         decoration: BoxDecoration(
           border: Border(
@@ -88,7 +127,58 @@ class CartScreen extends StatelessWidget {
                     color: Colors.transparent,
                     child: InkWell(
                       borderRadius: BorderRadius.circular(30),
-                      onTap: () {},
+                      onTap: () async {
+                        double amountInCents = subtotal * 1000;
+                        int intengerAmount = (amountInCents / 10).ceil();
+                        await payWithCard(amount: intengerAmount);
+                        if (response.success == true) {
+                          User user = _auth.currentUser;
+                          final _uid = user.uid;
+                          cartProvider.getCartItems
+                              .forEach((key, orderValue) async {
+                            final orderId = uuid.v4();
+                            try {
+                              await FirebaseFirestore.instance
+                                  .collection('order')
+                                  .doc(orderId)
+                                  .set({
+                                'orderId': orderId,
+                                'userId': _uid,
+                                'productId': orderValue.productId,
+                                'title': orderValue.title,
+                                'price': orderValue.price * orderValue.quantity,
+                                'imageUrl': orderValue.imageUrl,
+                                'quantity': orderValue.quantity,
+                                'orderDate': Timestamp.now(),
+                              });
+                              DateTime d = Timestamp.now().toDate();
+
+                              showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return CustomDialogBox(
+                                      orderId: orderId,
+                                      uid: _uid,
+                                      productId: orderValue.productId,
+                                      title: orderValue.title,
+                                      price: (orderValue.price *
+                                              orderValue.quantity)
+                                          .toString(),
+                                      imageUrl: orderValue.imageUrl,
+                                      quantity: orderValue.quantity.toString(),
+                                      orderDate: d.toString(),
+                                    );
+                                  });
+                            } catch (err) {
+                              print('error occured $err');
+                            }
+                          });
+                          cartProvider.clearCart();
+                        } else {
+                          globalMethods.authErrorHandle(
+                              'Please enter your true information', context);
+                        }
+                      },
                       splashColor: Theme.of(ctx).splashColor,
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
@@ -114,7 +204,7 @@ class CartScreen extends StatelessWidget {
                     fontWeight: FontWeight.w600),
               ),
               Text(
-                'US ${subtotal.toStringAsFixed(3)}',
+                'INR ${subtotal.toStringAsFixed(3)}',
                 //textAlign: TextAlign.center,
                 style: TextStyle(
                     color: Colors.blue,

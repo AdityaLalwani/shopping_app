@@ -53,7 +53,7 @@ class _WishlistFullState extends State<WishlistFull> {
                             height: 20.0,
                           ),
                           Text(
-                            "\$ ${favsAttr.price}",
+                            "\₹ ${favsAttr.price}",
                             style: TextStyle(
                                 fontWeight: FontWeight.bold, fontSize: 18.0),
                           ),
